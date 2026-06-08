@@ -12,7 +12,7 @@ async fn main() -> anyhow::Result<()> {
     let stdin = SP1Stdin::from(&fs::read("elf/0.bin")?);
     let prover = ProverClient::builder()
         .network_for(NetworkMode::Reserved)
-        .rpc_url("http://gateway.internal:50061")
+        .rpc_url("http://localhost:50061")
         .build()
         .await;
     let pk = prover
