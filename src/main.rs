@@ -9,8 +9,34 @@ use std::fs;
 
 #[tokio::main]
 async fn main() -> anyhow::Result<()> {
+    
+    // prove_on_cluster()?;
+    prove_on_cuda().await?;
+    // verify().await?;
+
+    Ok(())
+}
+
+pub async fn prove_on_cuda() -> anyhow::Result<()> {
     let elf: Elf = fs::read("blobs/subblock.bin")?.into();
     let stdin = SP1Stdin::from(&fs::read("blobs/0.bin")?);
+    let prover = ProverClient::from_env().await;
+    let pk = prover
+        .setup(elf)
+        .await?;
+    println!("setup is complete.");
+    let proof = prover
+        .prove(&pk, stdin)
+        .compressed()
+        .await?;
+    println!("proof is ready!");
+    let _ = proof.save("./proof.bin");
+    Ok(())
+}
+
+pub async fn prove_on_cluster() -> anyhow::Result<()> {
+    let elf: Elf = fs::read("blobs/subblock.bin")?.into();
+    let stdin = SP1Stdin::from(&fs::read("blobs/0.bin")?);    
     let prover = ProverClient::builder()
         .network_for(NetworkMode::Reserved)
         .rpc_url("http://localhost:50061")
@@ -26,8 +52,6 @@ async fn main() -> anyhow::Result<()> {
         .await?;
     println!("proof is ready!");
     let _ = proof.save("./proof.bin");
-    // verify().await?;
-
     Ok(())
 }
 
@@ -41,7 +65,7 @@ pub async fn verify() -> anyhow::Result<()> {
     let pk = cpu_client
         .setup(elf)
         .await?;        
-    let proof = SP1ProofWithPublicValues::load("blobs/proof.bin")?;
+    let proof = SP1ProofWithPublicValues::load("proof.bin")?;
     println!("verifying...");
     cpu_client.verify(&proof, pk.verifying_key(), None)?;
     println!("WOW, verified!");
