@@ -12,7 +12,7 @@ use std::fs;
 async fn main() -> anyhow::Result<()> {
     
     // just_execute().await?;
-    // prove_on_cluster()?;
+    // prove_on_cluster().await?;
     prove_on_cuda().await?;
     // verify().await?;
 
