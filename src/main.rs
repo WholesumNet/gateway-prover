@@ -77,7 +77,7 @@ pub async fn prove_on_cluster() -> anyhow::Result<()> {
 pub async fn verify() -> anyhow::Result<()> {
     println!("Initializing SP1.");
     let cpu_client = ProverClient::builder()
-        .cpu()
+        .light()
         .build()
         .await;
     let elf: Elf = fs::read("blobs/subblock.bin").unwrap().into();
