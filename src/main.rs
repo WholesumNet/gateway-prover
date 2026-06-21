@@ -22,7 +22,7 @@ pub async fn just_execute() -> anyhow::Result<()> {
     let elf: Elf = fs::read("blobs/subblock.bin")?.into();
     // let stdin_blob = fs::read("blobs/1.bin")?;
     let stdin: SP1Stdin = bincode::deserialize(&fs::read("blobs/0.bin")?)?;
-    let prover = ProverClient::from_env().await;
+    let prover = ProverClient::builder().light().build().await;
     let _ = prover
         .setup(elf.clone())
         .await?;
