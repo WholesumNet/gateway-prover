@@ -19,7 +19,7 @@ async fn main() -> anyhow::Result<()> {
     Ok(())
 }
 pub async fn just_execute() -> anyhow::Result<()> {
-    let elf: Elf = fs::read("blobs/subblock.bin")?.into();
+    let elf: Elf = fs::read("blobs/elf.bin")?.into();
     // let stdin_blob = fs::read("blobs/1.bin")?;
     let stdin: SP1Stdin = bincode::deserialize(&fs::read("blobs/0.bin")?)?;
     let prover = ProverClient::builder().light().build().await;
@@ -37,7 +37,7 @@ pub async fn just_execute() -> anyhow::Result<()> {
 }
 
 pub async fn prove_on_cuda() -> anyhow::Result<()> {
-    let elf: Elf = fs::read("blobs/subblock.bin")?.into();
+    let elf: Elf = fs::read("blobs/elf.bin")?.into();
     let stdin: SP1Stdin = bincode::deserialize(&fs::read("blobs/0.bin")?)?;
     let prover = ProverClient::from_env().await;
     let pk = prover
@@ -54,7 +54,7 @@ pub async fn prove_on_cuda() -> anyhow::Result<()> {
 }
 
 pub async fn prove_on_cluster() -> anyhow::Result<()> {
-    let elf: Elf = fs::read("blobs/subblock.bin")?.into();
+    let elf: Elf = fs::read("blobs/elf.bin")?.into();
     let stdin: SP1Stdin = bincode::deserialize(&fs::read("blobs/0.bin")?)?;
     let prover = ProverClient::builder()
         .network_for(NetworkMode::Reserved)
@@ -80,7 +80,7 @@ pub async fn verify() -> anyhow::Result<()> {
         .light()
         .build()
         .await;
-    let elf: Elf = fs::read("blobs/subblock.bin").unwrap().into();
+    let elf: Elf = fs::read("blobs/elf.bin").unwrap().into();
     let pk = cpu_client
         .setup(elf)
         .await?;        
